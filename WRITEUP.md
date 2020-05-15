@@ -1,0 +1,111 @@
+# Project Write-Up
+
+The model I have used in my project is 'person-detection-retail-0013'.
+This model was taken from website: https://docs.openvinotoolkit.org/2019_R3/_models_intel_index.html
+
+The model suitable for my device was: https://docs.openvinotoolkit.org/2019_R3/_models_intel_person_detection_retail_0013_description_person_detection_retail_0013.html
+
+I have used the following commands to download the model:
+- `cd /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader`
+- `ls`
+- `sudo ./downloader.py --name person-detection-retail-0013 --precisions FP16 -o /home/workspace`
+
+This helped me to get .xml and .bin files required for the project.
+
+Then, I used the following command to run main.py:
+
+`python main.py -i resources/Pedestrian_Detect_2_1_1.mp4 -m person-detection-retail-0013.xml -l /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libcpu_extension_sse4.so -d CPU -pt 0.6 | ffmpeg -v warning -f rawvideo -pixel_format bgr24 -video_size 768x432 -framerate 24 -i - http://0.0.0.0:3004/fac.ffm`
+
+## Explaining Custom Layers
+
+The process behind converting custom layers involves depends on frameowrks we use either it is tensorflow,caffee or kaldi.We can find it here:
+https://docs.openvinotoolkit.org/2019_R3/_docs_MO_DG_prepare_model_customize_model_optimizer_Customize_Model_Optimizer.html
+
+Some of the potential reasons for handling custom layers is to optimize our pre-trained models and convert them to a intermediate representation(IR) without a lot of loss of accuracy and shrink and speed up the Performance so that desired output is resulted.
+
+## Comparing Model Performance
+
+My method(s) to compare models before and after conversion to Intermediate Representations
+were its speed and its accuracy to give final output relatively.
+
+The difference between model accuracy pre- and post-conversion was that it decreased as the model was shrinked and helped me to make it faster, although this will not give the model higher inference accuracy. In fact, there will be some loss of accuracy as a result of potential changes like lower precision. Therefore, these losses in accuracy are minimized.
+
+The size of the model pre- and post-conversion was gradully reduced.When I downloaded, it was approxiamtely of 140 MBs and after conversion of the model into IR, it reduced to KBs.
+
+## Assess Model Use Cases
+
+Some of the potential use cases of the people counter app are
+
+- It provides valuable visitor analytics.
+
+- It helps to improve in-store operations.
+
+- Every business with a physical space should count customer traffic to see the bigger picture of what is going on in their business.
+
+- Each of these use cases would be useful because every business whether you are a shopping center, retail chain, museum, library, sporting venue, bank, restaurant or other.People Counting data will help you make well-informed decisions about your business.
+
+- It can help to optimize sales and conversions.
+
+Each of these use cases would be useful because it helps to optimise our work and makes it easier to detect whatever we require.
+
+## Assess Effects on End User Needs
+
+Lighting, model accuracy, and camera focal length/image size have different effects on a deployed edge model. The potential effects of each of these are as follows:
+
+Better the model accuracy, More are the chances to obtain the desired results through an app deployed at edge.
+
+Focal length/image also have a effect as better be the pixel quality of image or better the camera focal length,more clear results ww will obtain.
+
+Lighter the model, More faster it will get execute and more adequate results in faster time as compared to a heavier model.
+
+## Model Research
+
+[This heading is only required if a suitable model was not found after trying out at least three different models. However, you may also use this heading to detail how you converted 
+a successful model.]
+
+In investigating potential people counter models, I tried each of the following three models:
+
+- Model 1: [faster_rcnn_inception_v2_coco_2018_01_28]
+  - Model Source [http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz]
+  - I converted the model to an Intermediate Representation with the following arguments
+      -To download the model
+      `wget http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz`
+      - To unzip the tar:
+      `tar -xvf faster_rcnn_inception_v2_coco_2018_01_28.tar.gz`
+      - To switch the directory:
+      `cd faster_rcnn_inception_v2_coco_2018_01_28`
+      - Command to run the model:
+      `python main.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config -- reverse_input_channels --tensorflow_use_custom_operations_config/opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/faster_rcnn_support.json`
+      - It was obtained in 136 seconds.
+  - The model was insufficient for the app becuase when I tried it had many errors including server connection becuase it missed some files which even after resetting the data of workspace didnt change.
+  - I tried to improve the model for the app by checking in documentation and found that it also missed some attributes which was required. So I added the, too but still it gave me errors.
+      
+- Model 2: [ssd_mobilenet_v2_coco]
+  - Model Source [http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_coco_2018_03_29.tar.gz]
+  - I converted the model to an Intermediate Representation with the following arguments:
+      - To download the model:
+      `wget http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_coco_2018_03_29.tar.gz`
+      - To unzip the model:
+      `tar -xvf ssd_mobilenet_v2_coco_2018_03_29.tar.gz`
+      - To switch directory:
+      `cd ssd_mobilenet_v2_coco_2018_03_29`
+      `export MOD_OPT=/opt/intel/openvino/deployment_tools/model_optimizer`
+      - Command to run
+      `python main.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config -- reverse_input_channels --tensorflow_use_custom_operations_config/opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/ssd_v2_support.json`
+      - .xml and .bin files were obtained in 59.66 seconds
+  - The model was insufficient for the app because it showed the error of not getting connected to the server even after running the mosca and ffmpeg severs correctly. I asked montors about the error and rechecked everything. Finally output was able to run on new tab but still the video was not able to load. As then suggested by a mentor, I switched the model and dropped this.
+  - I tried to improve the model for the app by resetting the data 4 times and reloading everything as i couldnt see any error in my steps. I tried to change the video which I thought may be shown in output screen but didnt work. Also tried with an image but no results.
+
+
+- Model 3: [ssd_inception_v2_coco_2018_01_28]
+  - Model Source [http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz]
+  - I converted the model to an Intermediate Representation with the following arguments:
+      - To download the model:
+      `wget http://download.tensorflow.org/models/object_detection/ssd_inception_v2_coco_2018_01_28.tar.gz -Unpack the file`
+      - To unzip the model:
+      `tar -xvf ssd_inception_v2_coco_2018_01_28.tar.gz`
+      - To switch the directory:
+      `cd ssd_inception_v2_coco_2018_01_28`
+      - To run the model:
+      `python main.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config -- reverse_input_channels --tensorflow_use_custom_operations_config /opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/ssd_v2_support.json`
+  - The model was insufficient for the app because It also has issues like first model where it failed to detect person in specific time period. It was sticking at some places where a person may leave the screen but still counted as 1 person on screen. Tried it with other video but same results. Count was not proper and also time duration which would affect the average duration with no accurate measurements exactly so I couldn't use this model too.
