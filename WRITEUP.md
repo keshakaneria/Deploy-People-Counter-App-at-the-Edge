@@ -99,35 +99,45 @@ In investigating potential people counter models, I tried each of the following 
   - Model Source [http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz]
   - I converted the model to an Intermediate Representation with the following arguments:
   
-      -To download the model:
+      - To download the model:
+       `wget http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz`
       
-      `wget http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz`
       - To unzip the tar:
       `tar -xvf faster_rcnn_inception_v2_coco_2018_01_28.tar.gz`
+      
       - To switch the directory:
       `cd faster_rcnn_inception_v2_coco_2018_01_28`
+      
       - To convert model into IR:
       `python mo_tf.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config extensions/front/tf/ssd_v2_support.json`
+      
       - Command to run the model:
       `python main.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config -- reverse_input_channels --tensorflow_use_custom_operations_config/opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/faster_rcnn_support.json`
       - It was obtained in 136 seconds.
+  
   - The model was insufficient for the app becuase when I tried it had many errors including server connection becuase it missed some files which even after resetting the data of workspace didnt change.
   - I tried to improve the model for the app by checking in documentation and found that it also missed some attributes which was required. So I added the, too but still it gave me errors.
       
 - Model 2: [ssd_mobilenet_v2_coco]
   - Model Source [http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_coco_2018_03_29.tar.gz]
   - I converted the model to an Intermediate Representation with the following arguments:
+  
       - To download the model:
       `wget http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_coco_2018_03_29.tar.gz`
+      
       - To unzip the model:
       `tar -xvf ssd_mobilenet_v2_coco_2018_03_29.tar.gz`
+      
       - To switch directory:
       `cd ssd_mobilenet_v2_coco_2018_03_29`
       `export MOD_OPT=/opt/intel/openvino/deployment_tools/model_optimizer`
+      
       - To convert model into IR:
       `python mo_tf.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config extensions/front/tf/ssd_v2_support.json`
+      
       - Command to run
       `python main.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config -- reverse_input_channels --tensorflow_use_custom_operations_config/opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/ssd_v2_support.json`
+      
       - .xml and .bin files were obtained in 59.66 seconds
       
   - The model was insufficient for the app because it showed the error of not getting connected to the server even after running the mosca and ffmpeg severs correctly. I asked montors about the error and rechecked everything. Finally output was able to run on new tab but still the video was not able to load. As then suggested by a mentor, I switched the model and dropped this.
@@ -136,15 +146,20 @@ In investigating potential people counter models, I tried each of the following 
 - Model 3: [ssd_inception_v2_coco_2018_01_28]
   - Model Source [http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz]
   - I converted the model to an Intermediate Representation with the following arguments:
+      
       - To download the model:
       `wget http://download.tensorflow.org/models/object_detection/ssd_inception_v2_coco_2018_01_28.tar.gz -Unpack the file`
+      
       - To unzip the model:
       `tar -xvf ssd_inception_v2_coco_2018_01_28.tar.gz`
+      
       - To switch the directory:
       `cd ssd_inception_v2_coco_2018_01_28`
+      
       - To convert the model into IR:
       `python mo_tf.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config extensions/front/tf/ssd_v2_support.json`
+      
       - To run the model:
-      `python mo_tf.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config extensions/front/tf/ssd_v2_support.json`
+      ```python mo_tf.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config extensions/front/tf/ssd_v2_support.json```
       
   - The model was insufficient for the app because It also has issues like first model where it failed to detect person in specific time period. It was sticking at some places where a person may leave the screen but still counted as 1 person on screen. Tried it with other video but same results. Count was not proper and also time duration which would affect the average duration with no accurate measurements exactly so I couldn't use this model too.
