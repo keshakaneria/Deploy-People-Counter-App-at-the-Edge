@@ -10,7 +10,7 @@ I have used the following commands to download the model:
 - `ls`
 - `sudo ./downloader.py --name person-detection-retail-0013 --precisions FP16 -o /home/workspace`
 
-*This helped me to get `.xml` and `.bin` files required for the project and convertibg it into Inference model*
+***This helped me to get `.xml` and `.bin` files required for the project and converting it into Inference model***
 
 Then, I used the following command to run main.py:
 
