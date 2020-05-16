@@ -53,14 +53,14 @@ The difference between model accuracy pre- and post-conversion was that it decre
 I have majorly stressed on model accuracy and inference time, I have included model size as a secondary metric. I have stated the models I experimented with. For more information take a look at Model Research.
 
 Model size
-| |SSD MobileNet V2|SSD Inception V2|Faster rcnn Inception|
-|Before Conversion|67 MB|98 MB|28 MB|
-|After Conversion|65 MB|96 MB|26 MB|
+| |SSD MobileNet V2|SSD Inception V2|Faster rcnn Inception| |
+Before Conversion |67 MB|98 MB|28 MB|
+After Conversion |65 MB|96 MB|26 MB|
 
 Inference Time
-| |SSD MobileNet V2|SSD Inception V2|Faster rcnn Inception|
-|Before Conversion|50 ms|150 ms|55 ms|
-|After Conversion|60 ms|155 ms|60 ms|
+| |SSD MobileNet V2|SSD Inception V2|Faster rcnn Inception| |
+Before Conversion |50 ms|150 ms|55 ms|
+After Conversion |60 ms|155 ms|60 ms|
 
 ## Assess Model Use Cases
 
