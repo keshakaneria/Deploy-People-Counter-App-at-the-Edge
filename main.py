@@ -94,7 +94,7 @@ def main():
      
     client = connect_mqtt()
 
-    global initial_width, initial_height,prob_thresh
+    global initial_width, initial_height,prob_thresh=0.4
 
         # Initialise the class
     network = Network()
