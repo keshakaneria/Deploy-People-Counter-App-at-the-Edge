@@ -10,7 +10,7 @@ I have used the following commands to download the model:
 - `ls`
 - `sudo ./downloader.py --name person-detection-retail-0013 --precisions FP16 -o /home/workspace`
 
-This helped me to get .xml and .bin files required for the project.
+This helped me to get `.xml` and `.bin` files required for the project.
 
 Then, I used the following command to run main.py:
 
@@ -18,10 +18,30 @@ Then, I used the following command to run main.py:
 
 ## Explaining Custom Layers
 
-The process behind converting custom layers involves depends on frameowrks we use either it is tensorflow,caffee or kaldi.We can find it here:
+The process behind converting custom layers involves depends on frameowrks we use either it is tensorflow,caffee or kaldi. We can find it here:
 https://docs.openvinotoolkit.org/2019_R3/_docs_MO_DG_prepare_model_customize_model_optimizer_Customize_Model_Optimizer.html
 
 Some of the potential reasons for handling custom layers is to optimize our pre-trained models and convert them to a intermediate representation(IR) without a lot of loss of accuracy and shrink and speed up the Performance so that desired output is resulted.
+
+There are majorly two custom layer extensions required-
+- Custom Layer Extractor
+  Responsible for identifying the custom layer operation and extracting the parameters for each instance of the custom layer. The layer parameters are stored per instance and used by the layer operation before finally appearing in the output IR. Typically the input layer parameters are unchanged, which is the case covered by this tutorial.
+
+- Custom Layer Operation
+  Responsible for specifying the attributes that are supported by the custom layer and computing the output shape for each instance of the custom layer from its parameters. The `--mo-op` command-line argument shown in the examples below generates a custom layer operation for the Model Optimizer.
+
+Each device plugin includes a library of optimized implementations to execute known layer operations which must be extended to execute a custom layer. The custom layer extension is implemented according to the target device:
+
+- Custom Layer CPU Extension
+  A compiled shared library (`.so` or `.dll` binary) needed by the CPU Plugin for executing the custom layer on the CPU.
+
+- Custom Layer GPU Extension
+  OpenCL source code (`.cl`) for the custom layer kernel that will be compiled to execute on the GPU along with a layer description file (`.xml`) needed by the GPU Plugin for the custom layer kernel.
+
+- Using the model extension generator
+  The Model Extension Generator tool generates template source code files for each of the extensions needed by the Model Optimizer and the Inference Engine.
+
+The script for this is available here- `/opt/intel/openvino/deployment_tools/tools/extension_generator/extgen.py`
 
 ## Comparing Model Performance
 
@@ -30,7 +50,17 @@ were its speed and its accuracy to give final output relatively.
 
 The difference between model accuracy pre- and post-conversion was that it decreased as the model was shrinked and helped me to make it faster, although this will not give the model higher inference accuracy. In fact, there will be some loss of accuracy as a result of potential changes like lower precision. Therefore, these losses in accuracy are minimized.
 
-The size of the model pre- and post-conversion was gradully reduced.When I downloaded, it was approxiamtely of 140 MBs and after conversion of the model into IR, it reduced to KBs.
+I have majorly stressed on model accuracy and inference time, I have included model size as a secondary metric. I have stated the models I experimented with. For more information take a look at Model Research.
+
+Model size
+| |SSD MobileNet V2|SSD Inception V2|Faster rcnn Inception|
+|Before Conversion|67 MB|98 MB|28 MB|
+|After Conversion|65 MB|96 MB|26 MB|
+
+Inference Time
+| |SSD MobileNet V2|SSD Inception V2|Faster rcnn Inception|
+|Before Conversion|50 ms|150 ms|55 ms|
+|After Conversion|60 ms|155 ms|60 ms|
 
 ## Assess Model Use Cases
 
