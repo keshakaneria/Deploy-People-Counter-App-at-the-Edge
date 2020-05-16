@@ -14,7 +14,9 @@ I have used the following commands to download the model:
 
 Then, I used the following command to run main.py:
 
-`python main.py -i resources/Pedestrian_Detect_2_1_1.mp4 -m person-detection-retail-0013.xml -l /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libcpu_extension_sse4.so -d CPU -pt 0.6 | ffmpeg -v warning -f rawvideo -pixel_format bgr24 -video_size 768x432 -framerate 24 -i - http://0.0.0.0:3004/fac.ffm`
+```
+python main.py -i resources/Pedestrian_Detect_2_1_1.mp4 -m person-detection-retail-0013.xml -l /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libcpu_extension_sse4.so -d CPU -pt 0.6 | ffmpeg -v warning -f rawvideo -pixel_format bgr24 -video_size 768x432 -framerate 24 -i - http://0.0.0.0:3004/fac.ffm
+```
 
 ## Explaining Custom Layers
 
@@ -41,7 +43,8 @@ Each device plugin includes a library of optimized implementations to execute kn
 - Using the model extension generator
   The Model Extension Generator tool generates template source code files for each of the extensions needed by the Model Optimizer and the Inference Engine.
 
-The script for this is available here- `/opt/intel/openvino/deployment_tools/tools/extension_generator/extgen.py`
+The script for this is available here- 
+`/opt/intel/openvino/deployment_tools/tools/extension_generator/extgen.py`
 
 ## Comparing Model Performance
 
@@ -109,10 +112,14 @@ In investigating potential people counter models, I tried each of the following 
       `cd faster_rcnn_inception_v2_coco_2018_01_28`
       
       - To convert model into IR:
-      `python mo_tf.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config extensions/front/tf/ssd_v2_support.json`
+      ```
+      python mo_tf.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config extensions/front/tf/ssd_v2_support.json
+      ```
       
       - Command to run the model:
-      `python main.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config -- reverse_input_channels --tensorflow_use_custom_operations_config/opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/faster_rcnn_support.json`
+      ```
+      python main.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config -- reverse_input_channels --tensorflow_use_custom_operations_config/opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/faster_rcnn_support.json
+      ```
       - It was obtained in 136 seconds.
   
   - The model was insufficient for the app becuase when I tried it had many errors including server connection becuase it missed some files which even after resetting the data of workspace didnt change.
@@ -133,10 +140,13 @@ In investigating potential people counter models, I tried each of the following 
       `export MOD_OPT=/opt/intel/openvino/deployment_tools/model_optimizer`
       
       - To convert model into IR:
-      `python mo_tf.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config extensions/front/tf/ssd_v2_support.json`
+      ```
+      python mo_tf.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config extensions/front/tf/ssd_v2_support.json
+      ```
       
       - Command to run
-      `python main.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config -- reverse_input_channels --tensorflow_use_custom_operations_config/opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/ssd_v2_support.json`
+      ```python main.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config -- reverse_input_channels --tensorflow_use_custom_operations_config/opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/ssd_v2_support.json
+      ```
       
       - .xml and .bin files were obtained in 59.66 seconds
       
@@ -157,9 +167,14 @@ In investigating potential people counter models, I tried each of the following 
       `cd ssd_inception_v2_coco_2018_01_28`
       
       - To convert the model into IR:
-      `python mo_tf.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config extensions/front/tf/ssd_v2_support.json`
+      ```
+      python mo_tf.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config extensions/front/tf/ssd_v2_support.json
+      ```
       
       - To run the model:
-      ```python mo_tf.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config extensions/front/tf/ssd_v2_support.json```
+      ```
+      python mo_tf.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config extensions/front/tf/ssd_v2_support.json
+      ```
       
   - The model was insufficient for the app because It also has issues like first model where it failed to detect person in specific time period. It was sticking at some places where a person may leave the screen but still counted as 1 person on screen. Tried it with other video but same results. Count was not proper and also time duration which would affect the average duration with no accurate measurements exactly so I couldn't use this model too.
+  
