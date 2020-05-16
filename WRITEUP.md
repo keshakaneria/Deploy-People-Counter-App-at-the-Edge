@@ -23,7 +23,24 @@ python main.py -i resources/Pedestrian_Detect_2_1_1.mp4 -m person-detection-reta
 The process behind converting custom layers involves depends on frameowrks we use either it is tensorflow,caffee or kaldi. We can find it here:
 https://docs.openvinotoolkit.org/2019_R3/_docs_MO_DG_prepare_model_customize_model_optimizer_Customize_Model_Optimizer.html
 
+The example model is fed to the Model Optimizer that loads the model with the special parser, built on top of caffe.proto file. In case of failure, Model Optimizer asks you to prepare the parser that can read the model.
+Model Optimizer extracts the attributes of all layers. In particular, it goes through the list of layers and attempts to find the appropriate extractor. In order of priority, Model Optimizer checks if the layer is registered as:
+
+  - CustomLayersMapping.xml
+  - Model Optimizer extension
+  - Standard Model Optimizer layer
+
+Custom layers are important to use because:
+  - If your layer output shape depends on dynamic parameters, input data or previous layers parameters, calculation of output shape of the layer via model used can be incorrect. In this case, you need to patch it on your own.
+  - If the calculation of output shape of the layer fails inside the framework, Model Optimizer is unable to produce any correct Intermediate Representation and you also need to investigate the issue in the implementation of layers and patch it.
+  - You are not able to produce Intermediate Representation on any machine that does not have model installed. If you want to use Model Optimizer on multiple machines, your topology contains Custom Layers and you use CustomLayersMapping.xml to fallback on it, you need to configure on each new machine.
+
 Some of the potential reasons for handling custom layers is to optimize our pre-trained models and convert them to a intermediate representation(IR) without a lot of loss of accuracy and shrink and speed up the Performance so that desired output is resulted.
+
+You have two options for TensorFlow* models with custom layers as I have tried 3 models below:
+
+  - Register those layers as extensions to the Model Optimizer. In this case, the Model Optimizer generates a valid and optimized Intermediate Representation.
+  - If you have sub-graphs that should not be expressed with the analogous sub-graph in the Intermediate Representation, but another sub-graph should appear in the model, the Model Optimizer provides such an option. This feature is helpful for many TensorFlow models.
 
 There are majorly two custom layer extensions required-
 - Custom Layer Extractor
@@ -99,7 +116,7 @@ a successful model.]
 In investigating potential people counter models, I tried each of the following three models:
 
 - Model 1: [faster_rcnn_inception_v2_coco_2018_01_28]
-  - Model Source [http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz]
+  - [Model Source](http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz)
   - I converted the model to an Intermediate Representation with the following arguments:
   
       - To download the model:
@@ -123,10 +140,10 @@ In investigating potential people counter models, I tried each of the following 
       - It was obtained in 136 seconds.
   
   - The model was insufficient for the app becuase when I tried it had many errors including server connection becuase it missed some files which even after resetting the data of workspace didnt change.
-  - I tried to improve the model for the app by checking in documentation and found that it also missed some attributes which was required. So I added the, too but still it gave me errors.
+  - I tried to improve the model for the app by checking in documentation and found input is empty. So I added another input too but still it gave me errors.
       
 - Model 2: [ssd_mobilenet_v2_coco]
-  - Model Source [http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_coco_2018_03_29.tar.gz]
+  - [Model Source](http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_coco_2018_03_29.tar.gz)
   - I converted the model to an Intermediate Representation with the following arguments:
   
       - To download the model:
@@ -145,7 +162,8 @@ In investigating potential people counter models, I tried each of the following 
       ```
       
       - Command to run
-      ```python main.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config -- reverse_input_channels --tensorflow_use_custom_operations_config/opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/ssd_v2_support.json
+      ```
+      python main.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config -- reverse_input_channels --tensorflow_use_custom_operations_config/opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/ssd_v2_support.json
       ```
       
       - .xml and .bin files were obtained in 59.66 seconds
@@ -154,7 +172,7 @@ In investigating potential people counter models, I tried each of the following 
   - I tried to improve the model for the app by resetting the data 4 times and reloading everything as i couldnt see any error in my steps. I tried to change the video which I thought may be shown in output screen but didnt work. Also tried with an image but no results.
 
 - Model 3: [ssd_inception_v2_coco_2018_01_28]
-  - Model Source [http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz]
+  - [Model Source](http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz)
   - I converted the model to an Intermediate Representation with the following arguments:
       
       - To download the model:
@@ -177,4 +195,3 @@ In investigating potential people counter models, I tried each of the following 
       ```
       
   - The model was insufficient for the app because It also has issues like first model where it failed to detect person in specific time period. It was sticking at some places where a person may leave the screen but still counted as 1 person on screen. Tried it with other video but same results. Count was not proper and also time duration which would affect the average duration with no accurate measurements exactly so I couldn't use this model too.
-  
