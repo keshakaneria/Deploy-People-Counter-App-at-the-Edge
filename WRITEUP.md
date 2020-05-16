@@ -97,8 +97,10 @@ In investigating potential people counter models, I tried each of the following 
 
 - Model 1: [faster_rcnn_inception_v2_coco_2018_01_28]
   - Model Source [http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz]
-  - I converted the model to an Intermediate Representation with the following arguments
-      -To download the model
+  - I converted the model to an Intermediate Representation with the following arguments:
+  
+      -To download the model:
+      
       `wget http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz`
       - To unzip the tar:
       `tar -xvf faster_rcnn_inception_v2_coco_2018_01_28.tar.gz`
