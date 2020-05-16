@@ -104,6 +104,8 @@ In investigating potential people counter models, I tried each of the following 
       `tar -xvf faster_rcnn_inception_v2_coco_2018_01_28.tar.gz`
       - To switch the directory:
       `cd faster_rcnn_inception_v2_coco_2018_01_28`
+      - To convert model into IR:
+      `python mo_tf.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config extensions/front/tf/ssd_v2_support.json`
       - Command to run the model:
       `python main.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config -- reverse_input_channels --tensorflow_use_custom_operations_config/opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/faster_rcnn_support.json`
       - It was obtained in 136 seconds.
@@ -120,12 +122,14 @@ In investigating potential people counter models, I tried each of the following 
       - To switch directory:
       `cd ssd_mobilenet_v2_coco_2018_03_29`
       `export MOD_OPT=/opt/intel/openvino/deployment_tools/model_optimizer`
+      - To convert model into IR:
+      `python mo_tf.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config extensions/front/tf/ssd_v2_support.json`
       - Command to run
       `python main.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config -- reverse_input_channels --tensorflow_use_custom_operations_config/opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/ssd_v2_support.json`
       - .xml and .bin files were obtained in 59.66 seconds
+      
   - The model was insufficient for the app because it showed the error of not getting connected to the server even after running the mosca and ffmpeg severs correctly. I asked montors about the error and rechecked everything. Finally output was able to run on new tab but still the video was not able to load. As then suggested by a mentor, I switched the model and dropped this.
   - I tried to improve the model for the app by resetting the data 4 times and reloading everything as i couldnt see any error in my steps. I tried to change the video which I thought may be shown in output screen but didnt work. Also tried with an image but no results.
-
 
 - Model 3: [ssd_inception_v2_coco_2018_01_28]
   - Model Source [http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz]
@@ -136,6 +140,9 @@ In investigating potential people counter models, I tried each of the following 
       `tar -xvf ssd_inception_v2_coco_2018_01_28.tar.gz`
       - To switch the directory:
       `cd ssd_inception_v2_coco_2018_01_28`
+      - To convert the model into IR:
+      `python mo_tf.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config extensions/front/tf/ssd_v2_support.json`
       - To run the model:
-      `python main.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config -- reverse_input_channels --tensorflow_use_custom_operations_config /opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/ssd_v2_support.json`
+      `python mo_tf.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config extensions/front/tf/ssd_v2_support.json`
+      
   - The model was insufficient for the app because It also has issues like first model where it failed to detect person in specific time period. It was sticking at some places where a person may leave the screen but still counted as 1 person on screen. Tried it with other video but same results. Count was not proper and also time duration which would affect the average duration with no accurate measurements exactly so I couldn't use this model too.
