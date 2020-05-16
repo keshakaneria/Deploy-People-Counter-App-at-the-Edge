@@ -61,7 +61,7 @@ class Network:
             if len(not_supported) > 0:
                 sys.exit(1)
 
-        if num_requests == 0:
+        if num_requests == None:
             self.net_plugin = self.plugin.load(network=self.network)
         else:
             self.net_plugin = self.plugin.load(network=self.network, num_requests=num_requests)
